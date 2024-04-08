@@ -4,18 +4,23 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.ainirobot.coreservice.client.RobotApi
+import com.ainirobot.coreservice.client.listener.CommandListener
 import com.evo.qrgo.databinding.ActivityMainBinding
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanIntentResult
 import com.journeyapps.barcodescanner.ScanOptions
-import android.view.View
+
 
 
 class MainActivity : AppCompatActivity() {
+
+    private val reqId = 0
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -41,6 +46,8 @@ class MainActivity : AppCompatActivity() {
         binding.textResult.text = string
         // Hide the ImageView after scanning
         binding.imageView.visibility = View.GONE
+
+        RobotApi.getInstance().startNavigation(0, string, 1.0, (10 * 1000).toLong(), mMotionListener)
     }
 
     private fun showCamera() {
@@ -87,5 +94,21 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    private val mMotionListener: CommandListener = object : CommandListener() {
+        override fun onResult(result: Int, message: String) {
+            if ("succeed" == message) {
+            } else {
+            }
+        }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    // Handle back button click
+    fun onBackButtonClick(view: View) {
+        onBackPressed()
+    }
 
 }

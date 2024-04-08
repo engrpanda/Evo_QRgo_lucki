@@ -74,4 +74,8 @@ dependencies {
 
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.google.zxing:core:3.5.3")
+    implementation(files("libs/robotservice.jar"))
+    implementation("com.google.code.gson:gson:2.8.8")
+
+
 }
