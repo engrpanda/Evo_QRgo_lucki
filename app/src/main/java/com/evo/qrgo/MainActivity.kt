@@ -2,7 +2,9 @@ package com.evo.qrgo
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -15,8 +17,6 @@ import com.evo.qrgo.databinding.ActivityMainBinding
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanIntentResult
 import com.journeyapps.barcodescanner.ScanOptions
-
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,14 +47,19 @@ class MainActivity : AppCompatActivity() {
         // Hide the ImageView after scanning
         binding.imageView.visibility = View.GONE
 
-        RobotApi.getInstance().startNavigation(0, string, 1.0, (10 * 1000).toLong(), mMotionListener)
+        // Check if the scanned string is a URL
+        if (string.startsWith("http://") || string.startsWith("https://")) {
+            openLink(string)
+        } else {
+            RobotApi.getInstance().startNavigation(0, string, 1.0, (10 * 1000).toLong(), mMotionListener)
+        }
     }
 
     private fun showCamera() {
         val options = ScanOptions()
         options.setDesiredBarcodeFormats(ScanOptions.QR_CODE)
         options.setPrompt("Scan QR Code")
-        options.setCameraId(1) //default 0 back, 1 is front
+        options.setCameraId(0) //default 0 back, 1 is front
         options.setBeepEnabled(false)
         options.setBarcodeImageEnabled(true)
         options.setOrientationLocked(false)
@@ -93,11 +98,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
-
     private val mMotionListener: CommandListener = object : CommandListener() {
         override fun onResult(result: Int, message: String) {
             if ("succeed" == message) {
+                // Add any additional success handling here
             } else {
+                // Add any failure handling here
             }
         }
     }
@@ -111,4 +117,8 @@ class MainActivity : AppCompatActivity() {
         onBackPressed()
     }
 
+    private fun openLink(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(intent)
+    }
 }
